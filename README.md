@@ -1,4 +1,4 @@
-# BigGan-example Comic Book Image 
+# BigGan-example Comic Book Image(download.png image above) 
 Deep Generative Models---BigGan for image generation
 
 https://en.wikipedia.org/wiki/Generative_model ---->
