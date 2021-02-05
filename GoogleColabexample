@@ -1,0 +1,112 @@
+Generating Images with BigGAN
+View on TensorFlow.org	Run in Google Colab	View on GitHub	Download notebook	See TF Hub models
+This notebook is a demo for the BigGAN image generators available on TF Hub.
+
+See the BigGAN paper on arXiv [1] for more information about these models.
+
+After connecting to a runtime, get started by following these instructions:
+
+(Optional) Update the selected module_path in the first code cell below to load a BigGAN generator for a different image resolution.
+Click Runtime > Run all to run each cell in order.
+Afterwards, the interactive visualizations should update automatically when you modify the settings using the sliders and dropdown menus.
+If not, press the Play button by the cell to re-render outputs manually.
+Note: if you run into any issues, it can help to click Runtime > Restart and run all... to restart your runtime and rerun all cells from scratch.
+
+[1] Andrew Brock, Jeff Donahue, and Karen Simonyan. Large Scale GAN Training for High Fidelity Natural Image Synthesis. arxiv:1809.11096, 2018.
+
+First, set the module path. By default, we load the BigGAN-deep generator for 256x256 images from https://tfhub.dev/deepmind/biggan-deep-256/1. To generate 128x128 or 512x512 images or to use the original BigGAN generators, comment out the active module_path setting and uncomment one of the others.
+
+[1]
+# BigGAN-deep models
+# module_path = 'https://tfhub.dev/deepmind/biggan-deep-128/1'  # 128x128 BigGAN-deep
+module_path = 'https://tfhub.dev/deepmind/biggan-deep-256/1'  # 256x256 BigGAN-deep
+# module_path = 'https://tfhub.dev/deepmind/biggan-deep-512/1'  # 512x512 BigGAN-deep
+
+# BigGAN (original) models
+# module_path = 'https://tfhub.dev/deepmind/biggan-128/2'  # 128x128 BigGAN
+# module_path = 'https://tfhub.dev/deepmind/biggan-256/2'  # 256x256 BigGAN
+# module_path = 'https://tfhub.dev/deepmind
+Setup
+[2]
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
+
+import os
+import io
+import IPython.display
+import numpy as np
+import PIL.Image
+from scipy.stats import truncnorm
+import tensorflow_hub as hub
+
+WARNING:tensorflow:From /usr/local/lib/python3.6/dist-packages/tensorflow/python/compat/v2_compat.py:96: disable_resource_variables (from tensorflow.python.ops.variable_scope) is deprecated and will be removed in a future version.
+Instructions for updating:
+non-resource variables are not supported in the long term
+Load a BigGAN generator module from TF Hub
+[3]
+tf.reset_default_graph()
+print('Loading BigGAN module from:', module_path)
+module = hub.Module(module_path)
+inputs = {k: tf.placeholder(v.dtype, v.get_shape().as_list(), k)
+          for k, v in module.get_input_info_dict().items()}
+output = module(inputs)
+
+print()
+print('Inputs:\n', '\n'.join(
+    '  {}: {}'.format(*kv) for kv in inputs.items()))
+
+Loading BigGAN module from: https://tfhub.dev/deepmind/biggan-deep-256/1
+INFO:tensorflow:Saver not created because there are no variables in the graph to restore
+INFO:tensorflow:Saver not created because there are no variables in the graph to restore
+
+Inputs:
+   y: Tensor("y:0", shape=(?, 1000), dtype=float32)
+  z: Tensor("z:0", shape=(?, 128), dtype=float32)
+  truncation: Tensor("truncation:0", shape=(), dtype=float32)
+
+Output: Tensor("module_apply_default/G_trunc_output:0", shape=(?, 256, 256, 3), dtype=float32)
+Define some functions for sampling and displaying BigGAN images
+[4]
+input_z = inputs['z']
+input_y = inputs['y']
+input_trunc = inputs['truncation']
+
+dim_z = input_z.shape.as_list()[1]
+vocab_size = input_y.shape.as_list()[1]
+
+def truncated_z_sample(batch_size, truncation=1., seed=None):
+  state = None if seed is None else np.random.RandomState(seed)
+  values = truncnorm.rvs(-2, 2, size=(batch_size, dim_z), random_state=state)
+
+Create a TensorFlow session and initialize variables
+[5]
+initializer = tf.global_variables_initializer()
+sess = tf.Session()
+sess.run(initializer)
+Explore BigGAN samples of a particular category
+Try varying the truncation value.
+
+(Double-click on the cell to view code.)
+
+[12]
+#@title Category-conditional sampling { display-mode: "form", run: "auto" }
+
+num_samples = 5 #@param {type:"slider", min:1, max:20, step:1}
+truncation = 0.42 #@param {type:"slider", min:0.02, max:1, step:0.02}
+noise_seed = 56 #@param {type:"slider", min:0, max:100, step:1}
+category = "917) comic book" #@param ["0) tench, Tinca tinca", "1) goldfish, Carassius auratus", "2) great white shark, white shark, man-eater, man-eating shark, Carcharodon carcharias", "3) tiger shark, Galeocerdo cuvieri", "
+Category-conditional sampling
+num_samples:
+
+5
+truncation:
+
+0.42
+noise_seed:
+
+56
+category:
+
+917) comic book
+<img src="blob:chrome-untrusted://media-app/eaadecc9-60be-4922-861e-d3690767868a" alt="download.png"/>
+
