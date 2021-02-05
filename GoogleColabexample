@@ -1,6 +1,7 @@
 #I failed here to show google colab in a functioning way... :(
 # Link here will not contain all of my changes :(:(
 #See dot PNG for comic book image :):):):):)
+# https://colab.research.google.com/github/tensorflow/hub/blob/master/examples/colab/biggan_generation_with_tf_hub.ipynb#scrollTo=SeZ7u3rWd9jz 
 
 
 Generating Images with BigGAN
