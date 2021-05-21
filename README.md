@@ -20,3 +20,7 @@ Image with edits:
 ![2021_02_05_0iz_Kleki](https://user-images.githubusercontent.com/76789005/115069639-b5663200-9ea8-11eb-8fd4-2b295adb59a3.png)
 
 
+![Drawing](https://user-images.githubusercontent.com/76789005/119187066-aafe0180-ba2d-11eb-808e-140ca32e8572.png)
+
+
+
